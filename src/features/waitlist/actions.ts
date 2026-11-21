@@ -3,10 +3,11 @@
 import { toAttributionInput } from "@/features/attribution/parse";
 import { attributionFrom, readVisitorId } from "@/features/attribution/server";
 import { ATTRIBUTION_FIELDS } from "@/features/attribution/types";
+import { toLocale } from "@/lib/locale";
 import { getSupabase } from "@/lib/supabase/server";
 
 import { parseWaitlistForm } from "./parse";
-import type { WaitlistState } from "./types";
+import { WAITLIST_FIELDS, type WaitlistState } from "./types";
 
 const UNIQUE_VIOLATION = "23505";
 
@@ -30,10 +31,11 @@ export async function joinWaitlist(
       ),
     );
     const visitorId = await readVisitorId();
+    const locale = toLocale(formData.get(WAITLIST_FIELDS.locale));
 
     const { error } = await getSupabase()
       .from("waitlist")
-      .insert({ ...parsed.entry, ...attribution, visitor_id: visitorId });
+      .insert({ ...parsed.entry, ...attribution, visitor_id: visitorId, locale });
 
     // 이미 신청한 번호도 완료로 응답한다 (docs/decisions/0001-waitlist.md)
     if (error && error.code !== UNIQUE_VIOLATION) {

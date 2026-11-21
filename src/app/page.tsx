@@ -11,7 +11,7 @@ import { WaitlistDialogProvider } from "@/features/waitlist/waitlist-dialog";
 export default function Home() {
   return (
     <WaitlistDialogProvider>
-      <VisitTracker />
+      <VisitTracker locale="ko" />
       <Hero />
       {/* 데스크톱은 섹션 사이 80px 간격, 모바일은 섹션별 여백을 쓴다 */}
       <main className="lg:flex lg:flex-col lg:gap-20 lg:pt-10">
