@@ -18,14 +18,31 @@ export function WaitlistForm() {
 
   return (
     <form action={formAction}>
-      <label htmlFor="waitlist-email">이메일</label>
+      <label htmlFor="waitlist-name">이름</label>
       <input
-        id="waitlist-email"
-        name={WAITLIST_FIELDS.email}
-        type="email"
-        autoComplete="email"
+        id="waitlist-name"
+        name={WAITLIST_FIELDS.name}
+        type="text"
+        autoComplete="name"
+        maxLength={50}
         required
       />
+
+      <label htmlFor="waitlist-phone">휴대폰 번호</label>
+      <input
+        id="waitlist-phone"
+        name={WAITLIST_FIELDS.phone}
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel"
+        placeholder="010-1234-5678"
+        required
+      />
+
+      <label>
+        <input name={WAITLIST_FIELDS.agree} type="checkbox" required />
+        개인정보 수집 · 이용에 동의합니다 (필수)
+      </label>
 
       {/* honeypot: 사람에게는 보이지 않고 봇만 채운다 */}
       <div aria-hidden="true" style={{ position: "absolute", left: "-9999px" }}>

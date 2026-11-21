@@ -20,12 +20,11 @@ export async function joinWaitlist(
   }
 
   try {
-    // returning 없이 insert한다. anon에는 select 권한이 없다.
     const { error } = await getSupabase()
       .from("waitlist")
-      .insert({ email: parsed.email });
+      .insert(parsed.entry);
 
-    // 이미 등록된 이메일도 성공으로 응답한다 (docs/decisions/0001-waitlist.md)
+    // 이미 신청한 번호도 완료로 응답한다 (docs/decisions/0001-waitlist.md)
     if (error && error.code !== UNIQUE_VIOLATION) {
       console.error("[waitlist] insert failed", error);
       return {
