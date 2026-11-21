@@ -43,10 +43,13 @@ https://<도메인>/?utm_source=instagram&utm_medium=story&utm_campaign=launch
 
 | 경로 | 역할 |
 | --- | --- |
+| `src/features/landing/` | 랜딩 섹션 (Figma "동윤 작업용 오작교 · 데스크톱 웹" 기준, 1024px 이상은 데스크톱 배치) |
+| `src/assets/landing/` | 앱 화면 목업 · 프로필 · 가게 사진 (Figma에서 내려받음) |
+| `src/app/globals.css` | 색 · 그림자 등 디자인 토큰 |
 | `src/features/waitlist/parse.ts` | 폼 해석 · 이름 · 번호 정리 (순수 함수) |
 | `src/features/waitlist/actions.ts` | `joinWaitlist` Server Action |
-| `src/features/waitlist/waitlist-form.tsx` | 폼 (스타일 없음) |
-| `src/features/waitlist/waitlist-modal.tsx` | `<dialog>` 모달 (스타일 없음) |
+| `src/features/waitlist/waitlist-form.tsx` | 신청 폼 |
+| `src/features/waitlist/waitlist-dialog.tsx` | 공용 모달 · 모달 여는 버튼(`WaitlistTrigger`) |
 | `src/features/attribution/parse.ts` | 유입 경로 해석 (순수 함수) |
 | `src/features/attribution/server.ts` | 방문자 ID 쿠키 · 요청 호스트 읽기 |
 | `src/features/attribution/actions.ts` | `recordVisit` Server Action |
