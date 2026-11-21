@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ojakgyo Landing
 
-## Getting Started
+Next.js 16 (App Router) + Supabase. 랜딩에서 모달로 웨이팅리스트 이메일만 받는다.
 
-First, run the development server:
+## 시작하기
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local   # Supabase URL · publishable 키 입력
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## DB
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+마이그레이션은 `supabase/migrations/`에 있다. 원격 프로젝트에 적용:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm exec supabase login
+pnpm exec supabase link --project-ref <project-ref>
+pnpm exec supabase db push
+```
 
-## Learn More
+신청 목록은 Supabase 대시보드 Table Editor의 `waitlist`에서 본다. anon 키로는 조회할 수 없다.
 
-To learn more about Next.js, take a look at the following resources:
+## 구조
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| 경로 | 역할 |
+| --- | --- |
+| `src/features/waitlist/parse.ts` | 폼 파싱 · 이메일 정규화 (순수 함수) |
+| `src/features/waitlist/actions.ts` | `joinWaitlist` Server Action |
+| `src/features/waitlist/waitlist-form.tsx` | 폼 (스타일 없음) |
+| `src/features/waitlist/waitlist-modal.tsx` | `<dialog>` 모달 (스타일 없음) |
+| `src/lib/supabase/server.ts` | 서버 전용 Supabase 클라이언트 |
+| `supabase/migrations/` | `waitlist` 테이블 · RLS |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+권한 · 중복 처리 같은 결정은 [`docs/decisions/0001-waitlist.md`](docs/decisions/0001-waitlist.md)에 있다.
 
-## Deploy on Vercel
+## 스크립트
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `pnpm typecheck` — 라우트 타입 생성 + `tsc --noEmit`
+- `pnpm lint`
+- `pnpm build`
