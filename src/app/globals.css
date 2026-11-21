@@ -1,26 +1,38 @@
 @import "tailwindcss";
 
+/* Figma 변수 (속커톤 WEB 2조 · 오작교) */
+@theme {
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-noto: var(--font-noto-sans-kr), "Noto Sans KR", sans-serif;
+
+  --color-pink: #f8467b;
+  --color-pink-soft: #ffe1ea;
+  --color-pink-soft-mobile: #fbcfdc;
+  --color-hero: #fff0f4;
+  --color-ink: #0b0b0b;
+  --color-grey1: #ececec;
+  --color-grey2: #d1d1d1;
+  --color-grey4: #8a8a8a;
+  --color-grey5: #626262;
+  --color-grey6: #404040;
+  --color-device: #16161a;
+
+  --shadow-device: 0 24px 48px 0 rgb(110 26 56 / 0.18);
+  --shadow-device-sm: 0 18px 36px 0 rgb(110 26 56 / 0.18);
+  --shadow-float: 0 12px 32px 0 rgb(0 0 0 / 0.12);
+  --shadow-float-sm: 0 10px 24px 0 rgb(0 0 0 / 0.12);
+}
+
+/* 디자인은 라이트 테마 하나뿐이다 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #000000;
+  font-family: var(--font-sans);
+  word-break: keep-all;
 }
