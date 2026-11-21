@@ -8,12 +8,23 @@ import {
   useRef,
 } from "react";
 
+import type { Locale } from "@/lib/locale";
+
+import type { WaitlistCopy } from "./copy";
 import { WaitlistForm } from "./waitlist-form";
 
 const OpenWaitlistContext = createContext<(() => void) | null>(null);
 
 /** 페이지에 모달 하나를 두고, 어느 버튼에서든 열 수 있게 한다 */
-export function WaitlistDialogProvider({ children }: { children: ReactNode }) {
+export function WaitlistDialogProvider({
+  copy,
+  locale,
+  children,
+}: {
+  copy: WaitlistCopy;
+  locale: Locale;
+  children: ReactNode;
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const open = useCallback(() => dialogRef.current?.showModal(), []);
 
@@ -33,13 +44,13 @@ export function WaitlistDialogProvider({ children }: { children: ReactNode }) {
           <form method="dialog" className="absolute right-3 top-3">
             <button
               type="submit"
-              aria-label="닫기"
+              aria-label={copy.close}
               className="flex size-11 items-center justify-center rounded-full text-[28px] leading-none text-grey5 hover:bg-grey1"
             >
               ×
             </button>
           </form>
-          <WaitlistForm />
+          <WaitlistForm copy={copy} locale={locale} />
         </div>
       </dialog>
     </OpenWaitlistContext>

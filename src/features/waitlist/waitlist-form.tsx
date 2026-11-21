@@ -4,27 +4,22 @@ import { type FormEvent, startTransition, useActionState } from "react";
 
 import { readAttribution } from "@/features/attribution/client";
 import { ATTRIBUTION_FIELDS } from "@/features/attribution/types";
+import type { Locale } from "@/lib/locale";
 
 import { joinWaitlist } from "./actions";
-import {
-  initialWaitlistState,
-  WAITLIST_FIELDS,
-  type WaitlistErrorCode,
-} from "./types";
-
-const ERROR_MESSAGES: Record<WaitlistErrorCode, string> = {
-  name_required: "이름을 입력해 주세요.",
-  name_too_long: "이름이 너무 길어요.",
-  phone_required: "휴대폰 번호를 입력해 주세요.",
-  phone_invalid: "휴대폰 번호를 확인해 주세요.",
-  consent_required: "개인정보 수집 · 이용에 동의해 주세요.",
-  server_error: "잠시 후 다시 시도해 주세요.",
-};
+import type { WaitlistCopy } from "./copy";
+import { initialWaitlistState, WAITLIST_FIELDS } from "./types";
 
 const inputClass =
   "h-14 w-full rounded-[12px] border border-grey2 bg-white px-4 text-[17px] text-ink outline-none placeholder:text-grey4 focus:border-pink focus:ring-2 focus:ring-pink/20";
 
-export function WaitlistForm() {
+export function WaitlistForm({
+  copy,
+  locale,
+}: {
+  copy: WaitlistCopy;
+  locale: Locale;
+}) {
   const [state, formAction, pending] = useActionState(
     joinWaitlist,
     initialWaitlistState,
@@ -37,6 +32,7 @@ export function WaitlistForm() {
     const { search, referrer } = readAttribution();
     formData.set(ATTRIBUTION_FIELDS.search, search);
     formData.set(ATTRIBUTION_FIELDS.referrer, referrer);
+    formData.set(WAITLIST_FIELDS.locale, locale);
     startTransition(() => formAction(formData));
   };
 
@@ -44,19 +40,17 @@ export function WaitlistForm() {
     return (
       <div role="status" className="flex flex-col gap-3 pt-2">
         <h2 id="waitlist-title" className="text-[24px] font-bold leading-[1.35]">
-          신청이 완료됐어요
+          {copy.successTitle}
         </h2>
         <p className="text-[17px] font-medium leading-[1.5] text-grey5">
-          오작교가 문을 열면 남겨주신 번호로
-          <br />
-          가장 먼저 알려드릴게요.
+          {copy.successBody}
         </p>
         <form method="dialog" className="mt-5">
           <button
             type="submit"
             className="h-14 w-full rounded-[14px] bg-pink text-[18px] font-bold text-white"
           >
-            확인
+            {copy.successConfirm}
           </button>
         </form>
       </div>
@@ -66,16 +60,14 @@ export function WaitlistForm() {
   return (
     <form onSubmit={onSubmit} className="flex flex-col">
       <h2 id="waitlist-title" className="text-[24px] font-bold leading-[1.35]">
-        자기소개 등록하기
+        {copy.title}
       </h2>
       <p className="mt-2 text-[16px] font-medium leading-[1.5] text-grey5">
-        오작교가 문을 열면 가장 먼저 알려드릴게요.
-        <br />
-        이름과 휴대폰 번호를 남겨주세요.
+        {copy.description}
       </p>
 
       <label htmlFor="waitlist-name" className="mt-6 text-[15px] font-semibold">
-        이름
+        {copy.nameLabel}
       </label>
       <input
         id="waitlist-name"
@@ -83,21 +75,21 @@ export function WaitlistForm() {
         type="text"
         autoComplete="name"
         maxLength={50}
-        placeholder="홍길동"
+        placeholder={copy.namePlaceholder}
         required
         className={`${inputClass} mt-2`}
       />
 
       <label htmlFor="waitlist-phone" className="mt-4 text-[15px] font-semibold">
-        휴대폰 번호
+        {copy.phoneLabel}
       </label>
+      {/* type="tel"만 쓴다. inputMode="numeric"은 일부 키보드에서 +를 못 쳐서 해외 번호를 막는다. */}
       <input
         id="waitlist-phone"
         name={WAITLIST_FIELDS.phone}
         type="tel"
-        inputMode="numeric"
         autoComplete="tel"
-        placeholder="010-1234-5678"
+        placeholder={copy.phonePlaceholder}
         required
         className={`${inputClass} mt-2`}
       />
@@ -110,12 +102,12 @@ export function WaitlistForm() {
             required
             className="mt-0.5 size-5 shrink-0 accent-pink"
           />
-          개인정보 수집 · 이용에 동의합니다 (필수)
+          {copy.consentLabel}
         </label>
         <ul className="mt-2 pl-8 text-[13px] leading-[1.6] text-grey5">
-          <li>수집 항목: 이름, 휴대폰 번호</li>
-          <li>이용 목적: 오작교 서비스 출시 안내</li>
-          <li>보유 기간: 출시 안내 후 파기</li>
+          {copy.consentDetails.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
         </ul>
       </div>
 
@@ -130,7 +122,7 @@ export function WaitlistForm() {
       </div>
 
       <p aria-live="polite" className="mt-3 min-h-[22px] text-[15px] font-medium text-pink">
-        {state.status === "error" ? ERROR_MESSAGES[state.code] : null}
+        {state.status === "error" ? copy.errors[state.code] : null}
       </p>
 
       <button
@@ -138,7 +130,7 @@ export function WaitlistForm() {
         disabled={pending}
         className="mt-2 h-14 w-full rounded-[14px] bg-pink text-[18px] font-bold text-white disabled:opacity-60"
       >
-        {pending ? "보내는 중…" : "신청하기"}
+        {pending ? copy.submitting : copy.submit}
       </button>
     </form>
   );
