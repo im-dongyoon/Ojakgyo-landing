@@ -1,11 +1,11 @@
-import { WAITLIST_FIELDS } from "./types";
+import { WAITLIST_FIELDS, type WaitlistErrorCode } from "./types";
 
 export type WaitlistEntry = { name: string; phone: string };
 
 export type ParsedWaitlistForm =
   | { kind: "ok"; entry: WaitlistEntry }
   | { kind: "bot" }
-  | { kind: "invalid"; message: string };
+  | { kind: "invalid"; code: WaitlistErrorCode };
 
 const MAX_NAME_LENGTH = 50;
 // 010 외에 아직 쓰는 011 · 016 · 017 · 018 · 019도 받는다
@@ -35,23 +35,23 @@ export function parseWaitlistForm(formData: FormData): ParsedWaitlistForm {
 
   const name = normalizeName(getString(formData, WAITLIST_FIELDS.name));
   if (name.length === 0) {
-    return { kind: "invalid", message: "이름을 입력해 주세요." };
+    return { kind: "invalid", code: "name_required" };
   }
   if (name.length > MAX_NAME_LENGTH) {
-    return { kind: "invalid", message: "이름이 너무 길어요." };
+    return { kind: "invalid", code: "name_too_long" };
   }
 
   const rawPhone = getString(formData, WAITLIST_FIELDS.phone);
   if (rawPhone.trim().length === 0) {
-    return { kind: "invalid", message: "휴대폰 번호를 입력해 주세요." };
+    return { kind: "invalid", code: "phone_required" };
   }
   const phone = normalizePhone(rawPhone);
   if (phone === null) {
-    return { kind: "invalid", message: "휴대폰 번호를 확인해 주세요." };
+    return { kind: "invalid", code: "phone_invalid" };
   }
 
   if (formData.get(WAITLIST_FIELDS.agree) === null) {
-    return { kind: "invalid", message: "개인정보 수집 · 이용에 동의해 주세요." };
+    return { kind: "invalid", code: "consent_required" };
   }
 
   return { kind: "ok", entry: { name, phone } };

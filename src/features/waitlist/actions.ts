@@ -19,7 +19,7 @@ export async function joinWaitlist(
   // 봇에게는 성공처럼 보이게 하고 저장하지 않는다
   if (parsed.kind === "bot") return { status: "success" };
   if (parsed.kind === "invalid") {
-    return { status: "error", message: parsed.message };
+    return { status: "error", code: parsed.code };
   }
 
   try {
@@ -38,14 +38,11 @@ export async function joinWaitlist(
     // 이미 신청한 번호도 완료로 응답한다 (docs/decisions/0001-waitlist.md)
     if (error && error.code !== UNIQUE_VIOLATION) {
       console.error("[waitlist] insert failed", error);
-      return {
-        status: "error",
-        message: "잠시 후 다시 시도해 주세요.",
-      };
+      return { status: "error", code: "server_error" };
     }
   } catch (err) {
     console.error("[waitlist] unexpected error", err);
-    return { status: "error", message: "잠시 후 다시 시도해 주세요." };
+    return { status: "error", code: "server_error" };
   }
 
   return { status: "success" };

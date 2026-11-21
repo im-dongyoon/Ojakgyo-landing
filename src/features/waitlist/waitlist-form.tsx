@@ -6,7 +6,20 @@ import { readAttribution } from "@/features/attribution/client";
 import { ATTRIBUTION_FIELDS } from "@/features/attribution/types";
 
 import { joinWaitlist } from "./actions";
-import { initialWaitlistState, WAITLIST_FIELDS } from "./types";
+import {
+  initialWaitlistState,
+  WAITLIST_FIELDS,
+  type WaitlistErrorCode,
+} from "./types";
+
+const ERROR_MESSAGES: Record<WaitlistErrorCode, string> = {
+  name_required: "이름을 입력해 주세요.",
+  name_too_long: "이름이 너무 길어요.",
+  phone_required: "휴대폰 번호를 입력해 주세요.",
+  phone_invalid: "휴대폰 번호를 확인해 주세요.",
+  consent_required: "개인정보 수집 · 이용에 동의해 주세요.",
+  server_error: "잠시 후 다시 시도해 주세요.",
+};
 
 const inputClass =
   "h-14 w-full rounded-[12px] border border-grey2 bg-white px-4 text-[17px] text-ink outline-none placeholder:text-grey4 focus:border-pink focus:ring-2 focus:ring-pink/20";
@@ -117,7 +130,7 @@ export function WaitlistForm() {
       </div>
 
       <p aria-live="polite" className="mt-3 min-h-[22px] text-[15px] font-medium text-pink">
-        {state.status === "error" ? state.message : null}
+        {state.status === "error" ? ERROR_MESSAGES[state.code] : null}
       </p>
 
       <button
