@@ -41,7 +41,8 @@ function StoreCard({ store }: { store: LandingCopy["places"]["store"] }) {
           sizes="104px"
           className="h-[86px] w-[104px] shrink-0 rounded-[8px] object-cover"
         />
-        <div className="flex flex-col gap-1 whitespace-nowrap">
+        {/* 좁은 화면에서 안내 줄이 잘리지 않고 줄바꿈되게 한다 (영어 문구가 더 길다) */}
+        <div className="flex min-w-0 flex-col gap-1">
           <p className="text-[22px] font-bold tracking-[-0.44px] text-ink">{store.name}</p>
           <p className="text-[15px] tracking-[-0.3px] text-grey5">{store.meta}</p>
         </div>
