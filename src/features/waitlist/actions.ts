@@ -1,5 +1,8 @@
 "use server";
 
+import { toAttributionInput } from "@/features/attribution/parse";
+import { attributionFrom, readVisitorId } from "@/features/attribution/server";
+import { ATTRIBUTION_FIELDS } from "@/features/attribution/types";
 import { getSupabase } from "@/lib/supabase/server";
 
 import { parseWaitlistForm } from "./parse";
@@ -20,9 +23,17 @@ export async function joinWaitlist(
   }
 
   try {
+    const attribution = await attributionFrom(
+      toAttributionInput(
+        formData.get(ATTRIBUTION_FIELDS.search),
+        formData.get(ATTRIBUTION_FIELDS.referrer),
+      ),
+    );
+    const visitorId = await readVisitorId();
+
     const { error } = await getSupabase()
       .from("waitlist")
-      .insert(parsed.entry);
+      .insert({ ...parsed.entry, ...attribution, visitor_id: visitorId });
 
     // 이미 신청한 번호도 완료로 응답한다 (docs/decisions/0001-waitlist.md)
     if (error && error.code !== UNIQUE_VIOLATION) {

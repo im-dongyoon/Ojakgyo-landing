@@ -2,6 +2,9 @@
 
 import { useActionState } from "react";
 
+import { readAttribution } from "@/features/attribution/client";
+import { ATTRIBUTION_FIELDS } from "@/features/attribution/types";
+
 import { joinWaitlist } from "./actions";
 import { initialWaitlistState, WAITLIST_FIELDS } from "./types";
 
@@ -12,12 +15,20 @@ export function WaitlistForm() {
     initialWaitlistState,
   );
 
+  // 제출할 때 유입 정보를 함께 싣는다
+  const submit = (formData: FormData) => {
+    const { search, referrer } = readAttribution();
+    formData.set(ATTRIBUTION_FIELDS.search, search);
+    formData.set(ATTRIBUTION_FIELDS.referrer, referrer);
+    formAction(formData);
+  };
+
   if (state.status === "success") {
     return <p role="status">신청이 완료됐어요.</p>;
   }
 
   return (
-    <form action={formAction}>
+    <form action={submit}>
       <label htmlFor="waitlist-name">이름</label>
       <input
         id="waitlist-name"
